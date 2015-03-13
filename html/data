@@ -4,11 +4,11 @@
 # 
 # This script accepts URLs of the form:
 # 
-#    http://..../crndata.cgi/STATION_ID/ELEMENT_LIST/START_TIME,END_TYPE
+#    http://..../data/STATION_ID/ELEMENT_LIST/START_TIME,END_TYPE
 # 
 # for example, with specific values:
 # 
-#    http://..../crndata.cgi/1026/T5,P5/2015030108,2015030109
+#    http://..../data/1026/T5,P5/2015030108,2015030109
 # 
 # and produces output like this:
 # 
