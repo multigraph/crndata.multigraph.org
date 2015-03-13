@@ -1,0 +1,90 @@
+#! /usr/bin/perl                                                                                                  
+
+# Proxy script for fetching CRN data from NCDC server.
+# 
+# This script accepts URLs of the form:
+# 
+#    http://..../data/STATION_ID/ELEMENT_LIST/START_TIME,END_TYPE
+# 
+# for example, with specific values:
+# 
+#    http://..../data/1026/T5,P5/2015030108,2015030109
+# 
+# and produces output like this:
+# 
+# 201503010800,.52,0
+# 201503010805,.59,0
+# 201503010810,.47,0
+# 201503010815,.34,0
+# 201503010820,.23,0
+# 201503010825,.17,0
+# 201503010830,.05,0
+# 201503010835,-.02,0
+# 201503010840,-.02,0
+# 201503010845,-.05,0
+# 201503010850,-.06,0
+# 201503010855,-.06,0
+# 201503010900,-.05,0
+
+use Time::Local;
+
+$path_info = $ENV{'PATH_INFO'};
+$path_info =~ s|^/||;
+@components = split("/", $path_info);
+
+$station_id = $components[0];
+
+@elements   = split(",", $components[1]);
+
+@times      = split(",", $components[2]);
+
+$first = substr($times[0], 0, 10);
+$last  = substr($times[1], 0, 10);
+$vars  = join(",", @elements);
+
+print "Content-type: text/plain\n\n";
+
+$ncdcurl = "http://www.ncdc.noaa.gov/crn/xmldata2?data=$station_id:$vars&first=$first&last=$last";
+print $ncdcurl, "\n";
+open(WGET, "wget -q -O - '$ncdcurl' |");
+while (<WGET>) {
+    chomp;
+    if (/<data/) {
+        ($time0) = /first="(\d+)"/;
+        $time0 = YYYYMMDDHHmm_to_time($time0);
+        ($timestep) = /timestep="(\d+)"/;
+        $timestep /= 1000.0;
+    } elsif (/^\d/) {
+        @fields = split(/,/);
+        $YYYYMMDDHHmm = time_to_YYYYMMDDHHmm($time0 + $fields[0] * $timestep);
+        @outvars = ($YYYYMMDDHHmm);
+        shift(@fields);
+        while (@fields) {
+            shift(@fields);
+            $val = shift(@fields);
+            if ($val eq "M") { $val = 0; }
+            $val =~ s/F//g;
+            push(@outvars, $val);
+        }
+        print join(",", @outvars) . "\n";
+    }
+}
+
+exit;
+
+sub YYYYMMDDHHmm_to_time {
+    my $YYYYMMDDHHmm = shift;
+    my $YYYY = substr($YYYYMMDDHHmm, 0, 4);
+    my $MM   = substr($YYYYMMDDHHmm, 4, 2);
+    my $DD   = substr($YYYYMMDDHHmm, 6, 2);
+    my $HH   = substr($YYYYMMDDHHmm, 8, 2);
+    my $mm   = substr($YYYYMMDDHHmm, 10, 2);
+    return timegm(0,$mm,$HH,$DD,$MM-1,$YYYY-1900);
+}
+
+sub time_to_YYYYMMDDHHmm {
+    my $time = shift;
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($time);
+    return sprintf("%04d%02d%02d%02d%02d",
+           $year+1900, $mon+1, $mday, $hour, $min);
+}

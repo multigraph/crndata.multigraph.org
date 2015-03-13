@@ -1,0 +1,9 @@
+Header set Access-Control-Allow-Origin "*"
+<Files "doit.cgi">
+    Allow from all
+    SetHandler cgi-script
+</Files>
+<Files "data">
+    Allow from all
+    SetHandler cgi-script
+</Files>
