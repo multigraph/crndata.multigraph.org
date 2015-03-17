@@ -1,6 +1,6 @@
 #! /usr/bin/python
 
-# http://.../acisdata/SID/ELEMS/SDATE,EDATE/BUFFER1,BUFFER2
+# http://.../acisdata/SID/ELEMS/SDATE,EDATE
 
 # http://data.multigraph.org/acis/13881-1/maxt,mint,normal_maxt,normal_mint/20120920000000,20120927000000
 

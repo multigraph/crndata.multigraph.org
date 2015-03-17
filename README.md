@@ -1,16 +1,23 @@
-This is a proxy script for fetching CRN data from NCDC server using a restful
-syntax compatible with [Multigraph](http://multigraph.org).
+data.multigraph.org
+===================
+
+This project contains several proxy scripts for fetching data using a restful
+syntax compatible with Multigraph.
+
+
+crn
+---
 
 This script accepts URLs of the form:
 
 ```
-http://..../data/STATION_ID/ELEMENT_LIST/START_TIME,END_TYPE
+http://data.multigraph.org/crn/STATION_ID/ELEMENT_LIST/START_TIME,END_TYPE
 ```
 
 for example, with specific values:
 
 ```
-http://..../data/1026/T5,P5/2015030108,2015030109
+http://data.multigraph.org/crn/1026/T5,P5/2015030108,2015030109
 ```
 
 and produces output like this:
@@ -29,4 +36,19 @@ and produces output like this:
 201503010850,-.06,0
 201503010855,-.06,0
 201503010900,-.05,0
+```
+
+acis
+----
+
+This script accepts URLs of the form
+
+```
+http://data.multigraph.org/acis/SID/ELEMS/SDATE,EDATE
+```
+
+for example, with specific values:
+
+```
+http://data.multigraph.org/acis/13881-1/maxt,mint,normal_maxt,normal_mint/20120920000000,20120927000000
 ```
