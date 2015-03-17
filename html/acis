@@ -1,0 +1,45 @@
+#! /usr/bin/python
+
+# http://.../acisdata/SID/ELEMS/SDATE,EDATE/BUFFER1,BUFFER2
+
+# http://data.multigraph.org/acis/13881-1/maxt,mint,normal_maxt,normal_mint/20120920000000,20120927000000
+
+import cgi, sys, os, re, acis
+
+#import cgitb
+#cgitb.enable()
+
+path   = re.split(r'/', re.sub(r'^/', '', os.environ['PATH_INFO']))
+params = cgi.FieldStorage()
+
+sId   = path[0].replace('-',' ')
+elems = acis.build_elem_list( re.split(r',', path[1]) )
+sDate, eDate = [ acis.date_format(d) for d in re.split(r',', path[2]) ]
+
+a = acis.call('StnData', { 'elems' : elems,  'sId'   : sId, 'sDate' : sDate, 'eDate' : eDate, 'meta' : 'uid' })
+
+print "Content-type: text/plain\n"
+
+#print "hi there, this is dopy.cgi!"
+#
+#print "sId=%s" % sId
+#print "elems=", elems
+#print "sDate=%s" % sDate
+#print "eDate=%s" % eDate
+#print ""
+
+def cleanval(x):
+    if x == 'M':
+        return '-9000'
+    if x == 'T':
+        return '0'
+    return x
+
+def removedashes(x):
+    return re.sub(r'-+','',x)
+    
+for row in a['data']:
+    print ",".join( [removedashes(row[0])] + [ cleanval(x) for x in row[1:] ] )
+
+#for param in os.environ.keys():
+#    print "%40s: %s" % (param,os.environ[param])

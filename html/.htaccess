@@ -1,9 +1,9 @@
 Header set Access-Control-Allow-Origin "*"
-<Files "doit.cgi">
+<Files "acis">
     Allow from all
     SetHandler cgi-script
 </Files>
-<Files "data">
+<Files "crn">
     Allow from all
     SetHandler cgi-script
 </Files>
