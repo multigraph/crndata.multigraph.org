@@ -74,7 +74,7 @@ while (<WGET>) {
         while (@fields) {
             shift(@fields);
             $val = shift(@fields);
-            if ($val eq "M") { $val = 0; }
+            if ($val eq "M") { $val = -9999; }
             $val =~ s/F//g;
             push(@outvars, $val);
         }
